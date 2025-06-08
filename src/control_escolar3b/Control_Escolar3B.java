@@ -20,6 +20,7 @@ public class Control_Escolar3B {
         // TODO code application logic here
         conex = new Conexion();
         conex.abrirConexion();
+        System.out.println("prueba");
     }
     
 }
