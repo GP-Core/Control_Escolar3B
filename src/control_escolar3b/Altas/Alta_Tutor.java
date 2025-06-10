@@ -60,6 +60,11 @@ public class Alta_Tutor extends javax.swing.JFrame {
 
         jbtnAlta.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jbtnAlta.setText("Dar de Alta en el Sistema");
+        jbtnAlta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtnAltaActionPerformed(evt);
+            }
+        });
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel6.setText("Contactos");
@@ -155,6 +160,10 @@ public class Alta_Tutor extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jbtnAltaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAltaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jbtnAltaActionPerformed
 
     /**
      * @param args the command line arguments
