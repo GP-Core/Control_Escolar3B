@@ -24,7 +24,7 @@ public class Conexion {
             System.setProperty("oracle.net.wallet_location", walletLocation);
             conexion = DriverManager.getConnection(url, "Admin", "EquipoK_Los3brutales@");
             System.out.println("Conexión exitosa");
-
+            System.out.println("Hola");
         } catch (SQLException e) {
             System.out.println("Error al conectar: " +  e.getMessage());
             e.printStackTrace();
