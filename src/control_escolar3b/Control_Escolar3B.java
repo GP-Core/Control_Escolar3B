@@ -21,6 +21,7 @@ public class Control_Escolar3B {
         conex = new Conexion();
         conex.abrirConexion();
         System.out.println("prueba");
+        System.out.println("hola");
     }
     
 }
