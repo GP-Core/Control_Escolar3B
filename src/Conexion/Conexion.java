@@ -23,7 +23,7 @@ public class Conexion {
     public Connection abrirConexion(){
         try {
             // Cargar el driver JDBC ...
-            //Cambio xd
+            //Cambio xdddd
             System.setProperty("oracle.net.wallet_location", walletLocation);
             conexion = DriverManager.getConnection(url, "Admin", "EquipoK_Los3brutales@");
             System.out.println("Conexión exitosa");
