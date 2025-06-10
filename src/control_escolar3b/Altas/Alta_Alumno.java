@@ -4,6 +4,18 @@
  */
 package control_escolar3b.Altas;
 
+import Clases.AlumnoDAO;
+import Conexion.Conexion;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
 /**
  *
  * @author yadia
@@ -15,7 +27,52 @@ public class Alta_Alumno extends javax.swing.JFrame {
      */
     public Alta_Alumno() {
         initComponents();
+        cargarGrados();
+        cargarGrupos();
     }
+    
+    Conexion c = new Conexion();
+    
+    public void cargarGrados() {
+        try {
+            Connection con = c.abrirConexion();  // tu clase de conexión
+            String sql = "SELECT grado_nombre FROM grados";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            jcbGrado.removeAllItems();  // Limpiar antes de agregar nuevos
+            while (rs.next()) {
+                jcbGrado.addItem(rs.getString("grado_nombre"));
+            }
+
+            rs.close();
+            ps.close();
+            con.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void cargarGrupos() {
+        try {
+            Connection con = c.abrirConexion();
+            String sql = "SELECT grupo_nombre FROM grupos";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            jcbGrupo.removeAllItems();
+            while (rs.next()) {
+                jcbGrupo.addItem(rs.getString("grupo_nombre"));
+            }
+
+            rs.close();
+            ps.close();
+            con.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -41,6 +98,7 @@ public class Alta_Alumno extends javax.swing.JFrame {
         jbtnAlta = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -52,7 +110,7 @@ public class Alta_Alumno extends javax.swing.JFrame {
 
         jLabel4.setText("Fecha de Nacimiento");
 
-        jftfFechaNac.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT))));
+        jftfFechaNac.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd/MM/yyyy"))));
 
         jLabel5.setText("Grado");
 
@@ -64,12 +122,25 @@ public class Alta_Alumno extends javax.swing.JFrame {
 
         jbtnAlta.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jbtnAlta.setText("Dar de Alta en el Sistema");
+        jbtnAlta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtnAltaActionPerformed(evt);
+            }
+        });
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel7.setText("Informacion Básica");
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel8.setText("Grupo de estudio");
+
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jButton1.setText("Cancelar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -83,9 +154,6 @@ public class Alta_Alumno extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(133, 133, 133)
                         .addComponent(jLabel7))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(98, 98, 98)
-                        .addComponent(jbtnAlta))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(42, 42, 42)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -113,7 +181,13 @@ public class Alta_Alumno extends javax.swing.JFrame {
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addComponent(jLabel5)
                                         .addGap(30, 30, 30)
-                                        .addComponent(jLabel6)))))))
+                                        .addComponent(jLabel6))))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(99, 99, 99)
+                        .addComponent(jbtnAlta))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(146, 146, 146)
+                        .addComponent(jButton1)))
                 .addContainerGap(62, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -145,9 +219,11 @@ public class Alta_Alumno extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jcbGrado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jcbGrupo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(55, 55, 55)
+                .addGap(29, 29, 29)
                 .addComponent(jbtnAlta)
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1)
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -163,6 +239,39 @@ public class Alta_Alumno extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jbtnAltaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAltaActionPerformed
+        // TODO add your handling code here:
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date textoFecha = new Date();
+        try {
+            textoFecha = sdf.parse(jftfFechaNac.getText());
+        } catch (ParseException ex) {
+            Logger.getLogger(Alta_Alumno.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        AlumnoDAO dao = new AlumnoDAO();
+        String nombre = txtNombre.getText();
+        String apellidos = txtApellidos.getText();
+        Date fechaNacimiento = textoFecha;
+        String nombreGrado = jcbGrado.getSelectedItem().toString();
+        String nombreGrupo = jcbGrupo.getSelectedItem().toString();
+        int sesionCreacion = 1;
+
+        boolean exito = dao.insertarAlumno(nombre, apellidos, fechaNacimiento, nombreGrado, nombreGrupo, sesionCreacion);
+
+        if (exito) {
+            JOptionPane.showMessageDialog(this, "Alumno registrado con éxito");
+        } else {
+            JOptionPane.showMessageDialog(this, "Error al registrar alumno");
+        }
+    }//GEN-LAST:event_jbtnAltaActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -200,6 +309,7 @@ public class Alta_Alumno extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

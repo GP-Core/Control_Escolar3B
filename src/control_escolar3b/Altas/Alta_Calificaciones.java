@@ -4,6 +4,13 @@
  */
 package control_escolar3b.Altas;
 
+import Conexion.Conexion;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+//import java.util.Date;
+import javax.swing.JOptionPane;
+import java.sql.CallableStatement;
 /**
  *
  * @author yadia
@@ -15,7 +22,117 @@ public class Alta_Calificaciones extends javax.swing.JFrame {
      */
     public Alta_Calificaciones() {
         initComponents();
+        cargarMaterias();
+        cargarAlumnos();
     }
+    
+    
+    Conexion c = new Conexion();
+
+    private void altaCalificacion() {
+        String nombreAlumno = jcbAlumno.getSelectedItem().toString();
+        String nombreMateria = jcbMateria.getSelectedItem().toString();
+        double valor = Double.parseDouble(jftfCalificacion.getText());
+        //Date creacion = Date
+
+        // Aquí pones el id de sesión real que corresponda
+        int sesionId = 1;
+
+        try {
+            Connection con = c.abrirConexion();
+
+            // Obtener alumno_id
+            String sqlAlumno = "SELECT alumno_id FROM alumnos WHERE alu_nombre = ?";
+            PreparedStatement psAlumno = con.prepareStatement(sqlAlumno);
+            psAlumno.setString(1, nombreAlumno);
+            ResultSet rsAlumno = psAlumno.executeQuery();
+            int alumnoId = -1;
+            if (rsAlumno.next()) {
+                alumnoId = rsAlumno.getInt("alumno_id");
+            }
+            rsAlumno.close();
+            psAlumno.close();
+
+            // Obtener materia_id
+            String sqlMateria = "SELECT materia_id FROM materias WHERE materia_nombre = ?";
+            PreparedStatement psMateria = con.prepareStatement(sqlMateria);
+            psMateria.setString(1, nombreMateria);
+            ResultSet rsMateria = psMateria.executeQuery();
+            int materiaId = -1;
+            if (rsMateria.next()) {
+                materiaId = rsMateria.getInt("materia_id");
+            }
+            rsMateria.close();
+            psMateria.close();
+
+            // Llamar al procedimiento
+            CallableStatement cs = con.prepareCall("{call registrar_calificacion(?, ?, ?, ?)}");
+            cs.setInt(1, alumnoId);
+            cs.setInt(2, materiaId);
+            cs.setDouble(3, valor);
+            cs.setInt(4, sesionId);
+
+            cs.execute();
+            cs.close();
+            con.close();
+
+            JOptionPane.showMessageDialog(this, "Calificación registrada correctamente.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al registrar la calificación.");
+        }
+    }
+
+    
+    private void cargarAlumnos() {
+        try {
+            Connection con = c.abrirConexion();
+            String sql = "SELECT alu_nombre FROM alumnos";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            jcbAlumno.removeAllItems();
+            while (rs.next()) {
+                jcbAlumno.addItem(rs.getString("alu_nombre"));
+            }
+
+            rs.close();
+            ps.close();
+            con.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void cargarMaterias() {
+        try {
+            Connection con = c.abrirConexion();
+            String sql = "SELECT materia_nombre FROM materias";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            jcbMateria.removeAllItems();
+            while (rs.next()) {
+                jcbMateria.addItem(rs.getString("materia_nombre"));
+            }
+
+            rs.close();
+            ps.close();
+            con.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -38,6 +155,7 @@ public class Alta_Calificaciones extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jftfFecha = new javax.swing.JFormattedTextField();
         jbtnAlta = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         jFormattedTextField2.setText("jFormattedTextField2");
 
@@ -62,7 +180,20 @@ public class Alta_Calificaciones extends javax.swing.JFrame {
         jftfFecha.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT))));
 
         jbtnAlta.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jbtnAlta.setText("Darde Alta en el Sistema");
+        jbtnAlta.setText("Dar de Alta en el Sistema");
+        jbtnAlta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbtnAltaActionPerformed(evt);
+            }
+        });
+
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jButton1.setText("Cancelar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -93,15 +224,20 @@ public class Alta_Calificaciones extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jftfCalificacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(jLabel5))
-                            .addComponent(jftfFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(30, 30, 30))
-                    .addComponent(jLabel4))
-                .addGap(117, 117, 117))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jftfCalificacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                        .addGap(10, 10, 10)
+                                        .addComponent(jLabel5))
+                                    .addComponent(jftfFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(30, 30, 30))
+                            .addComponent(jLabel4))
+                        .addGap(117, 117, 117))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addGap(142, 142, 142))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -126,7 +262,9 @@ public class Alta_Calificaciones extends javax.swing.JFrame {
                 .addComponent(jftfFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(36, 36, 36)
                 .addComponent(jbtnAlta)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1)
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -142,6 +280,16 @@ public class Alta_Calificaciones extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jbtnAltaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnAltaActionPerformed
+        // TODO add your handling code here:
+        altaCalificacion();
+    }//GEN-LAST:event_jbtnAltaActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -179,6 +327,7 @@ public class Alta_Calificaciones extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JFormattedTextField jFormattedTextField2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
